@@ -10,6 +10,8 @@ class Elec:
         self.doc = []
         self.xiaoqu = xiaoqu
         self.louming = louming
+        if len(fangjian) == 3:
+            fangjian = "0" + fangjian
         self.fangjian = fangjian
         self.data = {
             "dxdateStart_DDDWS": "0:0:-1:-10000:-10000:0:-10000:-10000:1",
