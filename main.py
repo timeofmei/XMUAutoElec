@@ -1,14 +1,18 @@
 import os
 
-from flask import Flask
+from flask import Flask, request
 from parse import Elec
 app = Flask(__name__)
 
 
-@app.route('/')
-def hello_world(xiaoqu, louming, fangjian):
+@app.route('/', methods=["POST"])
+def hello_world():
+    xiaoqu = request.form.get("xiaoqu")
+    louming = request.form.get("louming")
+    fangjian = request.form.get("fangjian")
     elec = Elec(xiaoqu, louming, fangjian)
     return elec.getElec()
 
+
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    app.run(host='0.0.0.0', port=80)
