@@ -1,5 +1,5 @@
 import os
-
+import json
 from flask import Flask, request
 from parse import Elec
 app = Flask(__name__)
@@ -7,9 +7,11 @@ app = Flask(__name__)
 
 @app.route('/', methods=["POST"])
 def hello_world():
-    xiaoqu = request.form.get("xiaoqu")
-    louming = request.form.get("louming")
-    fangjian = request.form.get("fangjian")
+    data = request.get_data()
+    json_data = json.loads(data.decode("utf-8"))
+    xiaoqu = json_data.get("xiaoqu")
+    louming = json_data.get("louming")
+    fangjian = json_data.get("fangjian")
     elec = Elec(xiaoqu, louming, fangjian)
     return elec.getElec()
 
