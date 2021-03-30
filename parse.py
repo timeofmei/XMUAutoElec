@@ -1,3 +1,4 @@
+import re
 import httpx
 from lxml import etree
 from getDate import getDateData
@@ -55,9 +56,21 @@ class Elec:
         self.doc.append(etree.HTML(self.resp[2].text))
         try:
             finalResult = self.doc[2].xpath('//*[@id="lableft"]/text()')[0]
-            return finalResult
+            df = float(re.compile(
+                "账户余额：.*元").search(finalResult).group()[5:-1])
+            du = float(re.compile(
+                "剩余电量：.*度").search(finalResult).group()[5:-1])
+            result = {
+                "账户余额": df,
+                "剩余电量": du
+            }
+            return result
         except IndexError:
-            return "无结果"
+            result = {
+                "账户余额": -1.0,
+                "剩余电量": -1.0
+            }
+            return result
 
 
 if __name__ == "__main__":
