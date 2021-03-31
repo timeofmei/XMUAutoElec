@@ -9,9 +9,9 @@ class Elec:
         self.url = "http://elec.xmu.edu.cn/PdmlWebSetup/Pages/SMSMain.aspx"
         self.resp = []
         self.doc = []
+        self.finalResult = ""
         self.xiaoqu = xiaoqu
         self.louming = louming
-
         self.fangjian = fangjian
         self.data = {
             "dxdateStart_DDDWS": "0:0:-1:-10000:-10000:0:-10000:-10000:1",
@@ -20,8 +20,8 @@ class Elec:
             "dxdateEnd_DDD_C_FNPWS": "0:0:-1:-10000:-10000:0:0px:-10000:1"
         }
 
-    def find(pattern, string, start=0, end=None, format=str):
-        return format(re.compile(pattern).search(string).group()[start:end])
+    def findPat(self, pattern, start=0, end=None, format=str):
+        return format(re.compile(pattern).search(self.finalResult).group()[start:end])
 
     def getElec(self):
         self.getInitPage()
@@ -58,9 +58,10 @@ class Elec:
             self.url, data=self.data, cookies=self.cookies))
         self.doc.append(etree.HTML(self.resp[2].text))
         try:
-            finalResult = self.doc[2].xpath('//*[@id="lableft"]/text()')[0]
-            df = self.find("账户余额：.*元", finalResult, 5, -1, float)
-            du = self.find("剩余电量：.*度", finalResult, 5, -1, float)
+            self.finalResult = self.doc[2].xpath(
+                '//*[@id="lableft"]/text()')[0]
+            df = self.findPat("账户余额：.*元", 5, -1, float)
+            du = self.findPat("剩余电量：.*度", 5, -1, float)
             result = {
                 "账户余额": df,
                 "剩余电量": du
