@@ -1,6 +1,6 @@
 import re
 import httpx
-from lxml import etree
+from lxml.etree import HTML
 from getDate import getDateData
 
 
@@ -31,7 +31,7 @@ class Elec:
 
     def getInitPage(self):
         self.resp.append(httpx.get(self.url))
-        self.doc.append(etree.HTML(self.resp[0].text))
+        self.doc.append(HTML(self.resp[0].text))
 
         self.cookies = self.resp[0].cookies
         self.data["__VIEWSTATE"] = self.doc[0].xpath(
@@ -44,7 +44,7 @@ class Elec:
     def getSquaredPage(self):
         self.resp.append(httpx.post(
             self.url, data=self.data, cookies=self.cookies))
-        self.doc.append(etree.HTML(self.resp[1].text))
+        self.doc.append(HTML(self.resp[1].text))
 
         self.data["__VIEWSTATE"] = self.doc[1].xpath(
             '//*[@id="__VIEWSTATE"]/@value')[0]
@@ -56,7 +56,7 @@ class Elec:
     def getFinalResult(self):
         self.resp.append(httpx.post(
             self.url, data=self.data, cookies=self.cookies))
-        self.doc.append(etree.HTML(self.resp[2].text))
+        self.doc.append(HTML(self.resp[2].text))
         try:
             self.finalResult = self.doc[2].xpath(
                 '//*[@id="lableft"]/text()')[0]
