@@ -13,10 +13,7 @@ def hello_world():
     louming = json_data.get("louming")
     fangjian = json_data.get("fangjian")
     elec = Elec(xiaoqu, louming, fangjian)
-    try:
-        result = ujson.dumps(elec.getElec(), ensure_ascii=False)
-    except httpx.ConnectTimeout:
-        return ujson.dumps({"账户余额": -2.0, "剩余电量": -2.0})
+    result = ujson.dumps(elec.getElec(), ensure_ascii=False)
     return result
 
 

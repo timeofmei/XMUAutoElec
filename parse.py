@@ -10,6 +10,7 @@ class Elec:
         self.resp = []
         self.doc = []
         self.finalResult = ""
+        self.errmsg = {"账户余额": -2.0, "剩余电量": -2.0}
         self.xiaoqu = xiaoqu
         self.louming = louming
         self.fangjian = fangjian
@@ -26,11 +27,15 @@ class Elec:
     def getElec(self):
         self.getInitPage()
         self.getSquaredPage()
-        result = self.getFinalResult()
-        return result
+        self.result = self.getFinalResult()
+        return self.result
 
     def getInitPage(self):
-        self.resp.append(httpx.get(self.url))
+        try:
+            self.resp.append(httpx.get(self.url))
+        except:
+            self.result = self.errmsg
+            return None
         self.doc.append(HTML(self.resp[0].text))
 
         self.cookies = self.resp[0].cookies
@@ -42,8 +47,12 @@ class Elec:
         self.data.update(getDateData())
 
     def getSquaredPage(self):
-        self.resp.append(httpx.post(
-            self.url, data=self.data, cookies=self.cookies))
+        try:
+            self.resp.append(httpx.post(
+                self.url, data=self.data, cookies=self.cookies))
+        except:
+            self.result = self.errmsg
+            return None
         self.doc.append(HTML(self.resp[1].text))
 
         self.data["__VIEWSTATE"] = self.doc[1].xpath(
@@ -54,8 +63,12 @@ class Elec:
         self.data["txtRoomid"] = self.fangjian
 
     def getFinalResult(self):
-        self.resp.append(httpx.post(
-            self.url, data=self.data, cookies=self.cookies))
+        try:
+            self.resp.append(httpx.post(
+                self.url, data=self.data, cookies=self.cookies))
+        except:
+            self.result = self.errmsg
+            return None
         self.doc.append(HTML(self.resp[2].text))
         try:
             self.finalResult = self.doc[2].xpath(
